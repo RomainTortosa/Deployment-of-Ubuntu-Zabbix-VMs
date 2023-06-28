@@ -13,7 +13,7 @@ provider "libvirt" {
 resource "libvirt_volume" "ubuntu_focal_server" {
   name   = "zabbix.qcow2"  # Nom du volume
   format = "qcow2"  # Format du volume
-  source = "/home/romain.tortosa@Digital-Grenoble.local/snap/firefox/common/Downloads/ubuntu-22.04.2-desktop-amd64.iso"  # Chemin d'accès du fichier ISO d'installation d'Ubuntu
+  source = "/home/romain.tortosa@Digital-Grenoble.local/snap/firefox/common/Downloads/ubuntu-22.04.2-desktop-amd64.iso"  # Chemin daccès du fichier ISO dinstallation dUbuntu
 }
 
 resource "libvirt_volume" "test_ubuntu" {
@@ -42,7 +42,7 @@ resource "libvirt_domain" "default" {
     provisioner "remote-exec" {
       inline = [
         "sudo apt-get update",
-        "sudo apt-get install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent"  # Commandes exécutées à distance pour l'installation de Zabbix
+        "sudo apt-get install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent"  # Commandes exécutées à distance pour linstallation de Zabbix
       ]
     }
 }
