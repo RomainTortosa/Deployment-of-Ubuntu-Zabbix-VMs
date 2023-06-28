@@ -13,7 +13,8 @@ provider "libvirt" {
 resource "libvirt_volume" "ubuntu_focal_server" {
   name   = "zabbix.qcow2"  # Nom du volume
   format = "qcow2"  # Format du volume
-  source = "/home/romain.tortosa@Digital-Grenoble.local/snap/firefox/common/Downloads/ubuntu-22.04.2-desktop-amd64.iso"  # Chemin d'accès du fichier ISO d'installation d'Ubuntu
+  source = "/home/romain.tortosa@Digital-Grenoble.local/snap/firefox/common/Downloads/ubuntu-22.04.2-desktop-amd64.iso"  
+  # Chemin daccès du fichier ISO dinstallation dUbuntu
 }
 
 resource "libvirt_volume" "test_ubuntu" {
@@ -22,7 +23,7 @@ resource "libvirt_volume" "test_ubuntu" {
 }
 
 resource "libvirt_domain" "default" {
-    name   = "testvm-ubuntu1"  # Nom de la machine virtuelle
+    name   = "ubuntu"  # Nom de la machine virtuelle
     vcpu   = 2  # Nombre de VCPUs
     memory = 2048  # Mémoire en Mo
     running = false  # La machine virtuelle ne sera pas démarrée automatiquement après sa création
@@ -39,10 +40,24 @@ resource "libvirt_domain" "default" {
       bridge = "virbr0"  # Interface réseau utilisant le pont "virbr0"
     }
 
+    provisioner "file" {
+      source      = "preseed.cfg"
+      destination = "/tmp/preseed.cfg"
+ # Configuration de la connexion
+    connection {
+      type        = "ssh"
+      user        = "votre_utilisateur_ssh"
+      private_key = file("~/.ssh/id_ed25519.pub")  # Chemin vers votre clé privée SSH
+      host        = "votre_hôte_ssh"
+    }
+  }
+
+
     provisioner "remote-exec" {
-      inline = [
-        "sudo apt-get update",
-        "sudo apt-get install -y zabbix-server-mysql zabbix-frontend-php zabbix-apache-conf zabbix-agent"  # Commandes exécutées à distance pour l'installation de Zabbix
+    inline = [
+        "sudo debconf-set-selections /tmp/preseed.cfg",
+        "sudo rm /tmp/preseed.cfg"
       ]
     }
 }
+
